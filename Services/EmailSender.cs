@@ -22,7 +22,7 @@ namespace LAAPI.Services
 			var mimeMessage = new MimeMessage();
 			mimeMessage.From.Add(new MailboxAddress(
 				"Contact",
-				"nchukumah@infomall.ng"
+				AppConstant.Sender
 			));
 			mimeMessage.Subject = !string.IsNullOrEmpty(subject) ? subject : "Government Checker";
 			mimeMessage.Cc.Add(new MailboxAddress(email));
@@ -34,9 +34,9 @@ namespace LAAPI.Services
 
             using (var client = new SmtpClient())
 			{
-                client.Connect("infomall.ng", 25, SecureSocketOptions.None);
+                client.Connect(AppConstant.Host, AppConstant.Port, SecureSocketOptions.None);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate("nchukumah@infomall.ng", "osasere1994$");
+                client.Authenticate(AppConstant.Email, AppConstant.Password);
                 await client.SendAsync(mimeMessage);
 				_logger.LogInformation("message sent successfully...");
 				await client.DisconnectAsync(true);
@@ -49,7 +49,7 @@ namespace LAAPI.Services
 			var mimeMessage = new MimeMessage();
 			mimeMessage.From.Add(new MailboxAddress(
 				"Contact",
-                "contact@infomall.ng"
+				AppConstant.Sender
             ));
 			
 			foreach (string email in emails)
@@ -64,14 +64,14 @@ namespace LAAPI.Services
             mimeMessage.Body = builder.ToMessageBody() ?? new TextPart("plain");
 
             using (var client = new SmtpClient())
-			{
-                client.Connect("infomall.ng", 25, SecureSocketOptions.None);
-                client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate("contact@infomall.ng", "InfoMall01");
-                await client.SendAsync(mimeMessage);
-				_logger.LogInformation("message sent successfully...");
-				await client.DisconnectAsync(true);
-			}
+		{
+			client.Connect(AppConstant.Host, AppConstant.Port, SecureSocketOptions.None);
+			client.AuthenticationMechanisms.Remove("XOAUTH2");
+			client.Authenticate(AppConstant.Email, AppConstant.Password);
+			await client.SendAsync(mimeMessage);
+			_logger.LogInformation("message sent successfully...");
+			await client.DisconnectAsync(true);
+		}
 		}
 	}
 }
