@@ -1,38 +1,12 @@
 ﻿import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useForm } from '../../customHooks/useForm'
 import auth from '../../sideEffects/apis/auth'
+import { defaultTo, failure, passValidator, confirmPassValidator } from '../../helpers/clientAuth'
+import './Auth.css';
+import AuthLayout from './AuthLayout';
+import LoginView from './LoginView';
+import RegisterView from './RegisterView';
 
-
-const failure = {
-    display: 'block',
-    border: '0.5px solid red',
-    padding: 10,
-    color: 'red'
-}
-
-const defaultTo = {
-    display: 'none',
-}
-
-const passValidator = (password) => {
-    const passwordErrors = [];
-    if (!(/[A-Z]/.test(password))) {
-        passwordErrors.push("The password needs to contain at least one capital letter [A - Z]")
-    }
-    if (!(/\d/.test(password))) {
-        passwordErrors.push("The password needs to contain at least one number")
-    }
-    if (!(/[!@#\$%^\&\*()_\+\-=[\]{};':"|,.<>\\/?]/.test(password))) {
-        passwordErrors.push(`The password needs to contain at least one special character like [ !@#$%^&*()_+-=[]{};':"|,.<>/?]`)
-    }
-    if (password.length < 6) {
-        passwordErrors.push("Password length must be more than six characters in total")
-    }
-    return passwordErrors
-}
-
-const confirmPassValidator = (password, confirmPassword) => password === confirmPassword
 
 const Register = (props) => {
 
@@ -109,7 +83,13 @@ const Register = (props) => {
         successStatus,
         url: props.url
     }
-    return props.user ? <SignedInUser name='registered' /> : <RegisterForm {...registerProps} />
+    return props.user
+        ? <SignedInUser name='registered' />
+        : (
+            <AuthLayout>
+                <RegisterView {...registerProps} />
+            </AuthLayout>
+          )
 }
 
 export const Login = (props) => {
@@ -151,107 +131,34 @@ export const Login = (props) => {
         url: props.url
     }
 
-    const view = props.user ? <SignedInUser name='logged in' /> : <LoginForm {...loginProps} />
+    const view = props.user
+        ? <SignedInUser name='logged in' />
+        : (
+            <AuthLayout>
+                <LoginView {...loginProps} />
+            </AuthLayout>
+          )
+        
 
     return view;
 }
 
-const LoginForm = (props) => {
-    return (
-        <form onSubmit={props.submitForm}>
-            <div>
-                <label>Email: </label>
-                <input {...props.emailField} required />
-            </div>
-            <div>
-                <label>
-                    {props.showPassword ? 'Hide password' : 'Show password'}
-                    <input type='checkbox' onChange={() => props.setShowPassword(!props.showPassword)} checked={props.showPassword} />
-
-                </label>
-            </div>
-            <div>
-                <label>Password: </label>
-                <input type={props.showPassword ? 'text' : 'password'}
-                    value={props.password} onChange={({ target }) => props.setPassword(target.value)}
-                    required />
-            </div>
-            <Notification {...props.successStatus} />
-            <div>
-                <button type='submit'>Login</button>
-            </div>
-            <div>
-                <p>
-                    New? <Link to={`/register?redirectUrl=${props.url}`}> Register</Link>
-                </p>
-            </div>
-        </form>
-    )
-}
-
-const RegisterForm = (props) => {
-    return (
-        <form onSubmit={props.submitForm}>
-            <div>
-                <label>First name: </label>
-                <input {...props.firstNameField} required />
-            </div>
-            <div>
-                <label>Surname: </label>
-                <input {...props.surNameField} required />
-            </div>
-            <div>
-                <label>Email: </label>
-                <input {...props.emailField} required />
-            </div>
-            <div>
-                <label>Phone number: </label>
-                <input {...props.phoneNumberField} required />
-            </div>
-            <div>
-                <label>
-                    {props.showPassword ? 'Hide password' : 'Show password'}
-                    <input type='checkbox' onChange={() => props.setShowPassword(!props.showPassword)} checked={props.showPassword} />
-
-                </label>
-            </div>
-            <div>
-                <label>Password: </label>
-                <input type={props.showPassword ? 'text' : 'password'}
-                    className={props.password && props.errors.length > 0 ? 'red-border' : ''}
-                    value={props.password} onChange={props.onPasswordChange}
-                    required />
-            </div>
-            {props.errors.map((error, index) => <p key={index} className='text-danger'>{error}</p>)}
-            <div>
-                <label>Confirm password: </label>
-                <input type={props.showPassword ? 'text' : 'password'}
-                    className={props.confirmPassword && !props.confirmPasswordError ? 'red-border' : ''}
-                    onChange={props.onConfirmPasswordChange} value={props.confirmPassword}
-                    required />
-            </div>
-            {props.confirmPassword && !props.confirmPasswordError && <p className='text-danger'>The password and confirm password do not match</p>}
-            <Notification {...props.successStatus} />
-            <div>
-                {props.errors.length === 0 && props.confirmPasswordError && props.password && props.confirmPassword && <button type='submit'>Register</button>}
-            </div>
-            <div>
-                <p>
-                    Already registered?
-                    <Link to={`/login?redirectUrl=${props.url}`}> Login</Link>
-                </p>
-            </div>
-        </form>
-    )
-}
 
 
-export const Logout = (props) => <button onClick={props.logout}>Logout</button>
+export const Logout = (props) =>
+    (
+    <button onClick={props.logout} className="button-txt">
+        <span className="mr-2 d-none d-lg-inline text-gray-600 small">Administrator</span>
+        <img className="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60" alt="user profile" />
+        
+        <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+        Logout
+    </button>)
 
 const SignedInUser = ({ name }) => (
         <p>Your are already {name}</p>
     )
 
-const Notification = ({ message, style }) => <p style={style}>{message}</p>
+export const Notification = ({ message, style }) => <p style={style}>{message}</p>
 
 export default Register;

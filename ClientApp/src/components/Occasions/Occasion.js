@@ -3,12 +3,10 @@ import { Table } from 'reactstrap';
 import api from '../../sideEffects/apis/api'
 import { useForm, useFormFile } from '../../customHooks/useForm'
 import uploader from '../../customHooks/useFileUpload'
+import TextEditor from '../TextEditor/TextEditor';
 
 const noDataItem = {
-    colSpan: '4',
-    style: {
-        textAlign: 'center'
-    }
+    colSpan: '4'
 }
 
 
@@ -45,19 +43,23 @@ const OccasionList = ({ setOccasion, isBusy, ...props }) => {
     }
 
     const deleter = (id) => {
-        isBusy(true)
-        api.deleteWithId(`occasions/${id}`)
-            .then(response => {
-                props.deleteOccasion(id)
-                isBusy(false)
-            })
-            .catch(err => console.error(err))
+        if (window.confirm("Should we delete this?")) {
+            isBusy(true)
+            api.deleteWithId(`occasions/${id}`)
+                .then(response => {
+                    props.deleteOccasion(id)
+                    isBusy(false)
+                })
+                .catch(err => console.error(err))
+        }
+        
     }
 
 
     return (
-        <div>
+        <div className="f-width">
             <button type="button" onClick={() => setDisplay(!display)}>Add Event</button>
+            <OccasionForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={create} />
             <Table striped>
                 <thead>
                     <tr>
@@ -79,7 +81,6 @@ const OccasionList = ({ setOccasion, isBusy, ...props }) => {
                 }
 
             </Table>
-            <OccasionForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={create} />
         </div>
 
     )
@@ -160,51 +161,54 @@ const OccasionForm = (props) => {
     const fileUploadHandler = (e) => {
         props.isBusy(true)
         filesUpload.onUpload(e, fileField.value)
-        props.isBusy(false)
+            .then(() => props.isBusy(false))
     }
 
     return (
-        <form className={props.className} onSubmit={submitForm}>
-            {props.image && <img src={filesUpload.value || props.image} alt={props.title} className='img-fluid' />}
-            <input {...idField.main} />
-            <div>
-                <label>Add Title: </label>
-                <input {...titleField.main} />
-            </div>
-            <div>
-                <label>Add Brief: </label>
-                <textarea {...briefField.main}></textarea>
-            </div>
-            <div>
-                <label>Add Content: </label>
-                <textarea {...contentField.main}></textarea>
-            </div>
-            <div>
-                <label>Event will start on: </label>
-                <input {...startDateField.main} />
-            </div>
-            <div>
-                <label>Event will end on: </label>
-                <input {...endDateField.main} />
-            </div>
-            <div>
-                <label>Upload Image: </label>
-                <input type='file' onChange={fileField.onChange} />
-            </div>
-            {fileField.value &&
-                <button type="button" onClick={fileUploadHandler}>
-                    {props.creator && 'Add event image'}
-                    {!props.creator && props.image && 'Edit image'}
-                {!props.creator && !props.image && 'Add an image to this event'}
-                </button>
-            }
+        <div className="g-form">
+            <form className={props.className} onSubmit={submitForm}>
+                {props.image && <img src={filesUpload.value || props.image} alt={props.title} className='img-fluid' />}
+                <input {...idField.main} />
+                <div>
+                    <label>Add Title: </label>
+                    <input {...titleField.main} />
+                </div>
+                <div>
+                    <label>Add Brief: </label>
+                    <TextEditor {...briefField.main} />
+                </div>
+                <div>
+                    <label>Add Content: </label>
+                    <TextEditor {...briefField.main} />
+                </div>
+                <div>
+                    <label>Event will start on: </label>
+                    <input {...startDateField.main} />
+                </div>
+                <div>
+                    <label>Event will end on: </label>
+                    <input {...endDateField.main} />
+                </div>
+                <div>
+                    <label>Upload Image: </label>
+                    <input type='file' onChange={fileField.onChange} />
+                </div>
+                {fileField.value &&
+                    <button type="button" onClick={fileUploadHandler}>
+                        {props.creator && 'Add event image'}
+                        {!props.creator && props.image && 'Edit image'}
+                        {!props.creator && !props.image && 'Add an image to this event'}
+                    </button>
+                }
 
-            <br />
-            <button type='submit'>
-                {props.creator ? 'Create Event' : 'Edit Event'}
-            </button>
-            {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete Event</button>}
-        </form>
+                <br />
+                <button type='submit'>
+                    {props.creator ? 'Create Event' : 'Edit Event'}
+                </button>
+                {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete Event</button>}
+            </form>
+        </div>
+        
 
     )
 }

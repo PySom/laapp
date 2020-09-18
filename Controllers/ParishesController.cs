@@ -40,8 +40,6 @@ namespace LAAPI.Controllers
                                     .Item()
                                     .Where(c => c.Id == id)
                                     .Include(c => c.Deanery)
-                                    .Include(c => c.Confessions)
-                                    .Include(c => c.Masses)
                                     .Select(c => c.Convert<Parish, ParishInfoViewModel>(_mapper))
                                     .FirstOrDefaultAsync();
             if (parish != null)

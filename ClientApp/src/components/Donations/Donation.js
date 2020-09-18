@@ -3,12 +3,10 @@ import { Table } from 'reactstrap';
 import api from '../../sideEffects/apis/api'
 import { useForm, useFormFile } from '../../customHooks/useForm'
 import uploader from '../../customHooks/useFileUpload'
+import TextEditor from '../TextEditor/TextEditor';
 
 const noDataItem = {
-    colSpan: '4',
-    style: {
-        textAlign: 'center'
-    }
+    colSpan: '4'
 }
 
 
@@ -45,19 +43,23 @@ const DonationList = ({ setDonation, isBusy, ...props }) => {
     }
 
     const deleter = (id) => {
-        isBusy(true)
-        api.deleteWithId(`donations/${id}`)
-            .then(response => {
-                props.deleteDonation(id)
-                isBusy(false)
-            })
-            .catch(err => console.error(err))
+        if (window.confirm("Should we delete this?")) {
+            isBusy(true)
+            api.deleteWithId(`donations/${id}`)
+                .then(response => {
+                    props.deleteDonation(id)
+                    isBusy(false)
+                })
+                .catch(err => console.error(err))
+        }
+        
     }
 
 
     return (
-        <div>
+        <div className="f-width">
             <button type="button" onClick={() => setDisplay(!display)}>Add Donations</button>
+            <DonationForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={create} />
             <Table striped>
                 <thead>
                     <tr>
@@ -79,7 +81,6 @@ const DonationList = ({ setDonation, isBusy, ...props }) => {
                 }
 
             </Table>
-            <DonationForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={create} />
         </div>
 
     )
@@ -154,58 +155,62 @@ const DonationForm = (props) => {
     const fileUploadHandler = (e) => {
         props.isBusy(true)
         filesUpload.onUpload(e, fileField.value)
-        props.isBusy(false)
+            .then(() => props.isBusy(false))
     }
 
     const videoUploadHandler = (e) => {
         props.isBusy(true)
         videoUpload.onUpload(e, videoField.value)
-        props.isBusy(false)
+            .then(() => props.isBusy(false))
+
     }
 
     return (
-        <form className={props.className} onSubmit={submitForm}>
-            {props.image && <img src={filesUpload.value || props.image} alt={props.title} className='img-fluid' />}
-            {props.video && <video src={videoUpload.value || props.video} alt={props.title} controls autoPlay></video>}
-            <input {...idField.main} />
-            <div>
-                <label>Add Title: </label>
-                <input {...titleField.main} />
-            </div>
-            <div>
-                <label>Add Content: </label>
-                <textarea {...contentField.main}></textarea>
-            </div>
-            <div>
-                <label>Upload Image: </label>
-                <input type='file' onChange={fileField.onChange} />
-            </div>
-            {fileField.value &&
-                <button type="button" onClick={fileUploadHandler}>
-                {props.creator && 'Add donation image'}
-                    {!props.creator && props.image && 'Edit image'}
-                {!props.creator && !props.image && 'Add an image to this donation'}
-                </button>
-            }
+        <div className="g-form">
+            <form className={props.className} onSubmit={submitForm}>
+                {props.image && <img src={filesUpload.value || props.image} alt={props.title} className='img-fluid' />}
+                {props.video && <video src={videoUpload.value || props.video} alt={props.title} controls autoPlay></video>}
+                <input {...idField.main} />
+                <div>
+                    <label>Add Title: </label>
+                    <input {...titleField.main} />
+                </div>
+                <div>
+                    <label>Add Content: </label>
+                    <TextEditor {...contentField.main} />
+                </div>
+                <div>
+                    <label>Upload Image: </label>
+                    <input type='file' onChange={fileField.onChange} />
+                </div>
+                {fileField.value &&
+                    <button type="button" onClick={fileUploadHandler}>
+                        {props.creator && 'Add donation image'}
+                        {!props.creator && props.image && 'Edit image'}
+                        {!props.creator && !props.image && 'Add an image to this donation'}
+                    </button>
+                }
 
-            <div>
-                <label>Upload Video: </label>
-                <input type='file' onChange={videoField.onChange} />
-            </div>
-            {videoField.value &&
-                <button type="button" onClick={videoUploadHandler}>
-                    {props.creator && 'Add donation video'}
-                    {!props.creator && props.image && 'Edit image'}
-                    {!props.creator && !props.image && 'Add an image to this donation'}
-                </button>
-            }
+                <div>
+                    <label>Upload Video: </label>
+                    <input type='file' onChange={videoField.onChange} />
+                </div>
+                {videoField.value &&
+                    <button type="button" onClick={videoUploadHandler}>
+                        {props.creator && 'Add donation video'}
+                        {!props.creator && props.image && 'Edit image'}
+                        {!props.creator && !props.image && 'Add an image to this donation'}
+                    </button>
+                }
 
-            <br />
-            <button type='submit'>
-                {props.creator ? 'Create Donation' : 'Edit Donation'}
-            </button>
-            {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete Donation</button>}
-        </form>
+                <br />
+                <button type='submit'>
+                    {props.creator ? 'Create Donation' : 'Edit Donation'}
+                </button>
+                {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete Donation</button>}
+            </form>
+        </div>
+        
 
     )
 }

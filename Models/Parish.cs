@@ -20,6 +20,8 @@ namespace LAAPI.Models
         public string Phone { get; set; }
         public string ParishPriest { get; set; }
         public int TotalPriests { get; set; }
+        public string ConfessionDetail { get; set; }
+        public string MassDetail { get; set; }
 
         [ForeignKey("DeaneryId")]
         public Deanery Deanery { get; set; }

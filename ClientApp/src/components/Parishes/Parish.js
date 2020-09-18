@@ -3,8 +3,9 @@ import { Table } from 'reactstrap';
 import api from '../../sideEffects/apis/api'
 import { useForm, useFormFile } from '../../customHooks/useForm'
 import uploader from '../../customHooks/useFileUpload'
-import MassList from '../Masses/Mass';
-import ConfessionList from '../Confessions/Confession';
+import TextEditor from '../TextEditor/TextEditor';
+//import MassList from '../Masses/Mass';
+//import ConfessionList from '../Confessions/Confession';
 
 const noDataItem = {
     colSpan: '4',
@@ -54,6 +55,7 @@ const ParishList = ({ setParishes, isBusy, ...props }) => {
     return (
         <div>
             <button type="button" onClick={() => setDisplay(!display)}>Add Parish</button>
+            <ParishForm className={display ? 'd-block' : 'd-none'} creator={true} deaneries={props.deaneries} parentDeaneryId={props.parentDeaneryId} isBusy={isBusy} onSubmit={create} />
             <Table striped>
                 <thead>
                     <tr>
@@ -84,7 +86,6 @@ const ParishList = ({ setParishes, isBusy, ...props }) => {
                 }
 
             </Table>
-            <ParishForm className={display ? 'd-block' : 'd-none'} creator={true} deaneries={props.deaneries} parentDeaneryId={props.parentDeaneryId} isBusy={isBusy} onSubmit={create} />
         </div>
 
     )
@@ -102,29 +103,29 @@ const Parish = (props) => {
     }
 
 
-    const massProps = () => {
-        return {
-            isBusy: props.isBusy,
-            createMass: props.createMass,
-            editMass: props.editMass,
-            deleteMass: props.deleteMass,
-            parentDeaneryId: props.parentDeaneryId,
-            parentParishId: props.id,
+    //const massProps = () => {
+    //    return {
+    //        isBusy: props.isBusy,
+    //        createMass: props.createMass,
+    //        editMass: props.editMass,
+    //        deleteMass: props.deleteMass,
+    //        parentDeaneryId: props.parentDeaneryId,
+    //        parentParishId: props.id,
 
-        }
-    }
+    //    }
+    //}
 
-    const confessionProps = () => {
-        return {
-            isBusy: props.isBusy,
-            createConfession: props.createConfession,
-            editConfession: props.editConfession,
-            deleteConfession: props.deleteConfession,
-            parentDeaneryId: props.deaneryId,
-            parentParishId: props.id,
+    //const confessionProps = () => {
+    //    return {
+    //        isBusy: props.isBusy,
+    //        createConfession: props.createConfession,
+    //        editConfession: props.editConfession,
+    //        deleteConfession: props.deleteConfession,
+    //        parentDeaneryId: props.deaneryId,
+    //        parentParishId: props.id,
 
-        }
-    }
+    //    }
+    //}
     return (
         <tbody>
             <tr>
@@ -144,14 +145,14 @@ const Parish = (props) => {
             <tr>
                 <td {...noDataItem}><ParishForm {...{ ...props, ...additionalProps }} /></td>
             </tr>
-            <tr>
+            {/*<tr>
                 <td {...noDataItem}><MassList masses={props.masses} {...massProps()} /></td>
 
             </tr>
             <tr>
                 <td {...noDataItem}><ConfessionList confessions={props.confessions} {...confessionProps()} /></td>
 
-            </tr>
+            </tr>*/}
         </tbody>
 
 
@@ -168,6 +169,8 @@ const ParishForm = (props) => {
     const mapUrlField = useForm('url', (props.mapUrl || ''))
     const parishPriestField = useForm('text', (props.parishPriest || ''))
     const totalPriestsField = useForm('number', (props.totalPriests || 0))
+    const massDetailsField = useForm(null, (props.other || ''))
+    const confessionDetailsField = useForm(null, (props.other || ''))
     const emailField = useForm('email', (props.email || ''))
     const phoneField = useForm('tel', (props.phone || ''))
     const fileField = useFormFile()
@@ -186,6 +189,8 @@ const ParishForm = (props) => {
             totalPriests: totalPriestsField.main.value,
             email: emailField.main.value,
             phone: phoneField.main.value,
+            massDetail: massDetailsField.main.value,
+            confessionDetail: confessionDetailsField.main.value,
             deaneryId: deaneryIdField.main.value,
             image: filesUpload.value || props.image
         }
@@ -201,6 +206,8 @@ const ParishForm = (props) => {
         totalPriestsField.onSetChange('')
         emailField.onSetChange('')
         phoneField.onSetChange('')
+        massDetailsField.onSetChange('')
+        confessionDetailsField.onSetChange('')
     }
 
     const submitForm = (e) => {
@@ -215,74 +222,85 @@ const ParishForm = (props) => {
     const fileUploadHandler = (e) => {
         props.isBusy(true)
         filesUpload.onUpload(e, fileField.value)
-        props.isBusy(false)
+            .then(() => props.isBusy(false))
     }
 
     return (
-        <form className={props.className} onSubmit={submitForm}>
-            {props.image && <img src={filesUpload.value || props.image} alt={props.title} className='img-fluid' />}
-            <input {...idField.main} />
-            <div>
-                <label>parish name: </label>
-                <input {...nameField.main} />
-            </div>
-            <div>
-                <label>parish address: </label>
-                <input {...addressField.main} />
-            </div>
-            <div>
-                <label>Add parish email: </label>
-                <input {...emailField.main} />
-            </div>
-            <div>
-                <label>parish phone number: </label>
-                <input {...phoneField.main} />
-            </div>
-            <div>
-                <label>parish priest: </label>
-                <input {...parishPriestField.main} />
-            </div>
-            <div>
-                <label>total priests: </label>
-                <input {...totalPriestsField.main} />
-            </div>
-            <div>
-                <label>longitude if you know please: </label>
-                <input {...longitudeField.main} />
-            </div>
-            <div>
-                <label>latitude if you know please: </label>
-                <input {...latitudeField.main} />
-            </div>
-            <div>
-                <label>church map url if you know please: </label>
-                <input {...mapUrlField.main} />
-            </div>
-            <div>
-                <label>Deanery: </label>
-                <select value={deaneryIdField.main.value} onChange={deaneryIdField.main.onChange}>
-                    <option value="0"> -- Choose / change deanery -- </option>
-                    {props.deaneries.map(deanery => <option key={deanery.id} value={deanery.id}>{deanery.name}</option>)}
-                </select>
-            </div>
-            <div>
-                <label>Upload Image: </label>
-                <input type='file' onChange={fileField.onChange} />
-            </div>
-            {fileField.value &&
-                <button type="button" onClick={fileUploadHandler}>
-                    {props.creator && 'Add news image'}
-                    {!props.creator && props.image && 'Edit image'}
-                    {!props.creator && !props.image && 'Add an image to this news'}
-                </button>
-            }
+        <div className="g-form">
+            <form className={props.className} onSubmit={submitForm}>
+                {props.image && <img src={filesUpload.value || props.image} alt={props.title} className='img-fluid' />}
+                <input {...idField.main} />
+                <div>
+                    <label>parish name: </label>
+                    <input {...nameField.main} />
+                </div>
+                <div>
+                    <label>parish address: </label>
+                    <input {...addressField.main} />
+                </div>
+                <div>
+                    <label>Add parish email: </label>
+                    <input {...emailField.main} />
+                </div>
+                <div>
+                    <label>parish phone number: </label>
+                    <input {...phoneField.main} />
+                </div>
+                <div>
+                    <label>parish priest: </label>
+                    <input {...parishPriestField.main} />
+                </div>
+                <div>
+                    <label>total priests: </label>
+                    <input {...totalPriestsField.main} />
+                </div>
+                <div>
+                    <label>longitude if you know please: </label>
+                    <input {...longitudeField.main} />
+                </div>
+                <div>
+                    <label>latitude if you know please: </label>
+                    <input {...latitudeField.main} />
+                </div>
+                <div>
+                    <label>church map url if you know please: </label>
+                    <input {...mapUrlField.main} />
+                </div>
+                <div>
+                    <label>Deanery: </label>
+                    <select value={deaneryIdField.main.value} onChange={deaneryIdField.main.onChange}>
+                        <option value="0"> -- Choose / change deanery -- </option>
+                        {props.deaneries.map(deanery => <option key={deanery.id} value={deanery.id}>{deanery.name}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <label>Add Mass details: </label>
+                    <TextEditor {...massDetailsField.main} />
+                </div>
+                <div>
+                    <label>Add Confession details: </label>
+                    <TextEditor {...confessionDetailsField.main} />
+                </div>
+                <div>
+                    <label>Upload Image: </label>
+                    <input type='file' onChange={fileField.onChange} />
+                </div>
+                {fileField.value &&
+                    <button type="button" onClick={fileUploadHandler}>
+                        {props.creator && 'Add news image'}
+                        {!props.creator && props.image && 'Edit image'}
+                        {!props.creator && !props.image && 'Add an image to this news'}
+                    </button>
+                }
 
-            <br />
-            <button type='submit'>
-                {props.creator ? 'Create Parish' : 'Edit Parish'}
-            </button>
-            {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value, props.deaneryId)} type='button'>Delete Parish</button>}
-        </form>
+                <br />
+                <button type='submit'>
+                    {props.creator ? 'Create Parish' : 'Edit Parish'}
+                </button>
+                {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value, props.deaneryId)} type='button'>Delete Parish</button>}
+            </form>
+        </div>
+        
 
     )
 }

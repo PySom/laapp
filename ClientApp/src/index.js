@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import registerServiceWorker from './registerServiceWorker';
 import store from './store/store'
 import ConnectedApp from './hocs/App/ConnectedApp';
+import './custom.css';
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');

@@ -3,10 +3,7 @@ import { Table } from 'reactstrap';
 import api from '../../sideEffects/apis/api'
 
 const noDataItem = {
-    colSpan: '4',
-    style: {
-        textAlign: 'center'
-    }
+    colSpan: '4'
 }
 
 
@@ -33,18 +30,21 @@ const DonorList = ({ setDonor, isBusy, ...props }) => {
     }
 
     const deleteDonor = (id) => {
-        isBusy(true)
-        api.deleteWithId(`donors/${id}`)
-            .then(response => {
-                props.deleteDonor(id)
-                isBusy(false)
-            })
-            .catch(err => console.error(err))
+        if (window.confirm("Should we delete this?")) {
+            isBusy(true)
+            api.deleteWithId(`donors/${id}`)
+                .then(response => {
+                    props.deleteDonor(id)
+                    isBusy(false)
+                })
+                .catch(err => console.error(err))
+        }
+        
     }
 
 
     return (
-        <div>
+        <div className="f-width">
             <Table striped>
                 <thead>
                     <tr>

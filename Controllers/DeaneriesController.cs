@@ -31,8 +31,6 @@ namespace LAAPI.Controllers
                                                 .Include(c => c.Parishes)
                                                     .ThenInclude(p => p.Masses)
                                                 .Include(c => c.Parishes)
-                                                    .ThenInclude(p => p.Masses)
-                                                .Include(c => c.Parishes)
                                                     .ThenInclude(p => p.Confessions)
                                                 .Select(c => c.Convert<Deanery, DeaneryInfoViewModel>(_mapper))
                                                 .ToListAsync();
@@ -44,8 +42,6 @@ namespace LAAPI.Controllers
         {
             Deanery deanery = await _repo
                                     .Item()
-                                    .Include(c => c.Parishes)
-                                        .ThenInclude(p => p.Masses)
                                     .Include(c => c.Parishes)
                                         .ThenInclude(p => p.Masses)
                                     .Include(c => c.Parishes)

@@ -2,12 +2,10 @@
 import { Table } from 'reactstrap';
 import api from '../../sideEffects/apis/api'
 import { useForm } from '../../customHooks/useForm'
+import TextEditor from '../TextEditor/TextEditor';
 
 const noDataItem = {
-    colSpan: '4',
-    style: {
-        textAlign: 'center'
-    }
+    colSpan: '4'
 }
 
 
@@ -44,19 +42,23 @@ const QuotesList = ({ setQuotes, isBusy, ...props }) => {
     }
 
     const deleteQuote = (id) => {
-        isBusy(true)
-        api.deleteWithId(`quotes/${id}`)
-            .then(quote => {
-                props.deleteQuotes(id)
-                isBusy(false)
-            })
-            .catch(err => console.error(err))
+        if (window.confirm("Should we delete this?")) {
+            isBusy(true)
+            api.deleteWithId(`quotes/${id}`)
+                .then(quote => {
+                    props.deleteQuotes(id)
+                    isBusy(false)
+                })
+                .catch(err => console.error(err))
+        }
+        
     }
 
 
     return (
-        <div>
+        <div className="f-width">
             <button type="button" onClick={() => setDisplay(!display)}>Add Quote</button>
+            <QuotesForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={createNewQuote} />
             <Table striped>
                 <thead>
                     <tr>
@@ -78,7 +80,6 @@ const QuotesList = ({ setQuotes, isBusy, ...props }) => {
                 }
 
             </Table>
-            <QuotesForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={createNewQuote} />
         </div>
 
     )
@@ -145,22 +146,25 @@ const QuotesForm = (props) => {
 
 
     return (
-        <form className={props.className} onSubmit={submitForm}>
-            <input {...idField.main} />
-            <div>
-                <label>Add Quote: </label>
-                <textarea {...contentField.main}></textarea>
-            </div>
-            <div>
-                <label>Show this quote on: </label>
-                <input {...showOnField.main} />
-            </div>
+        <div className="g-form">
+            <form className={props.className} onSubmit={submitForm}>
+                <input {...idField.main} />
+                <div>
+                    <label>Add Quote: </label>
+                    <TextEditor {...contentField.main} />
+                </div>
+                <div>
+                    <label>Show this quote on: </label>
+                    <input {...showOnField.main} />
+                </div>
 
-            <button type='submit'>
-                {props.creator ? 'Create Quote' : 'Edit Quote'}
-            </button>
-            {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete Quote</button>}
-        </form>
+                <button type='submit'>
+                    {props.creator ? 'Create Quote' : 'Edit Quote'}
+                </button>
+                {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete Quote</button>}
+            </form>
+        </div>
+        
 
     )
 }

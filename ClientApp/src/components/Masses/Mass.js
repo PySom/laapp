@@ -49,6 +49,10 @@ const MassList = ({ setMasses, isBusy, ...props }) => {
     return (
         <div>
             <button type="button" onClick={() => setDisplay(!display)}>Add Mass</button>
+            <MassForm className={display ? 'd-block' : 'd-none'}
+                parentDeaneryId={props.parentDeaneryId}
+                parentParishId={props.parentParishId}
+                creator={true} isBusy={isBusy} onSubmit={create} />
             <Table striped>
                 <thead>
                     <tr>
@@ -73,10 +77,7 @@ const MassList = ({ setMasses, isBusy, ...props }) => {
                 }
 
             </Table>
-            <MassForm className={display ? 'd-block' : 'd-none'}
-                parentDeaneryId={props.parentDeaneryId}
-                parentParishId={props.parentParishId}
-                creator={true} isBusy={isBusy} onSubmit={create} />
+            
         </div>
 
     )
@@ -148,35 +149,38 @@ const MassForm = (props) => {
 
 
     return (
-        <form className={props.className} onSubmit={submitForm}>
-            <input {...idField.main} />
-            <div>
-                <label>Select Day of Week: </label>
-                <select value={dayField.main.value} onChange={dayField.main.onChange}>
-                    <option value="0">Sunday</option>
-                    <option value="1">Monday</option>
-                    <option value="2">Tuesday</option>
-                    <option value="3">Wednesday</option>
-                    <option value="4">Thursday</option>
-                    <option value="5">Friday</option>
-                    <option value="6">Saturday</option>
-                </select>
-            </div>
-            <div>
-                <label>Add Mass Start Time: </label>
-                <input {...startDateField.main} />
-            </div>
-            <div>
-                <label>Tentative period for Mass to end: </label>
-                <input {...endDateField.main} />
-            </div>
-            
+        <div className="g-form">
+            <form className={props.className} onSubmit={submitForm}>
+                <input {...idField.main} />
+                <div>
+                    <label>Select Day of Week: </label>
+                    <select value={dayField.main.value} onChange={dayField.main.onChange}>
+                        <option value="0">Sunday</option>
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Add Mass Start Time: </label>
+                    <input {...startDateField.main} />
+                </div>
+                <div>
+                    <label>Tentative period for Mass to end: </label>
+                    <input {...endDateField.main} />
+                </div>
 
-            <button type='submit'>
-                {props.creator ? 'Create Mass' : 'Edit Mass'}
-            </button>
-            {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value, props.parentParishId, props.parentDeaneryId)} type='button'>Delete Mass</button>}
-        </form>
+
+                <button type='submit'>
+                    {props.creator ? 'Create Mass' : 'Edit Mass'}
+                </button>
+                {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value, props.parentParishId, props.parentDeaneryId)} type='button'>Delete Mass</button>}
+            </form>
+        </div>
+        
 
     )
 }

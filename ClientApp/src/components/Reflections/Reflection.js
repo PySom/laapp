@@ -3,12 +3,10 @@ import { Table } from 'reactstrap';
 import api from '../../sideEffects/apis/api'
 import { useForm, useFormFile } from '../../customHooks/useForm'
 import uploader from '../../customHooks/useFileUpload'
+import TextEditor from '../TextEditor/TextEditor';
 
 const noDataItem = {
-    colSpan: '4',
-    style: {
-        textAlign: 'center'
-    }
+    colSpan: '4'
 }
 
 
@@ -45,24 +43,29 @@ const ReflectionList = ({ setReflection, isBusy, ...props }) => {
     }
 
     const deleteReflection = (id) => {
-        isBusy(true)
-        api.deleteWithId(`reflections/${id}`)
-            .then(reflection => {
-                props.deleteReflection(id)
-                isBusy(false)
-            })
-            .catch(err => console.error(err))
+        if (window.confirm("Should we delete this?")) {
+            isBusy(true)
+            api.deleteWithId(`reflections/${id}`)
+                .then(reflection => {
+                    props.deleteReflection(id)
+                    isBusy(false)
+                })
+                .catch(err => console.error(err))
+        }
+        
     }
 
 
     return (
-        <div>
-            <button type="button" onClick={() => setDisplay(!display)}>Add News</button>
+        <div className="f-width">
+            <button type="button" onClick={() => setDisplay(!display)}>Add Reflection</button>
+            <ReflectionForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={createReflection} />
             <Table striped>
                 <thead>
                     <tr>
                         <th>S/N</th>
                         <th>Title</th>
+                        <th>Content</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -78,7 +81,6 @@ const ReflectionList = ({ setReflection, isBusy, ...props }) => {
                 }
 
             </Table>
-            <ReflectionForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={createReflection} />
         </div>
 
     )
@@ -150,39 +152,42 @@ const ReflectionForm = (props) => {
     const fileUploadHandler = (e) => {
         props.isBusy(true)
         filesUpload.onUpload(e, fileField.value)
-        props.isBusy(false)
+            .then(() => props.isBusy(false))
     }
 
     return (
-        <form className={props.className} onSubmit={submitForm}>
-            {props.image && <img src={filesUpload.value || props.image} alt={props.title} className='img-fluid' />}
-            <input {...idField.main} />
-            <div>
-                <label>Add Title: </label>
-                <input {...titleField.main} />
-            </div>
-            <div>
-                <label>Add Content: </label>
-                <textarea {...contentField.main}></textarea>
-            </div>
-            <div>
-                <label>Upload Image: </label>
-                <input type='file' onChange={fileField.onChange} />
-            </div>
-            {fileField.value &&
-                <button type="button" onClick={fileUploadHandler}>
-                    {props.creator && 'Add news image'}
-                    {!props.creator && props.image && 'Edit image'}
-                    {!props.creator && !props.image && 'Add an image to this news'}
-                </button>
-            }
+        <div className="g-form">
+            <form className={props.className} onSubmit={submitForm}>
+                {props.image && <img src={filesUpload.value || props.image} alt={props.title} className='img-fluid' />}
+                <input {...idField.main} />
+                <div>
+                    <label>Add Title: </label>
+                    <input {...titleField.main} />
+                </div>
+                <div>
+                    <label>Add Content: </label>
+                    <TextEditor {...contentField.main} />
+                </div>
+                <div>
+                    <label>Upload Image: </label>
+                    <input type='file' onChange={fileField.onChange} />
+                </div>
+                {fileField.value &&
+                    <button type="button" onClick={fileUploadHandler}>
+                        {props.creator && 'Add news image'}
+                        {!props.creator && props.image && 'Edit image'}
+                        {!props.creator && !props.image && 'Add an image to this news'}
+                    </button>
+                }
 
-            <br />
-            <button type='submit'>
-                {props.creator ? 'Create News' : 'Edit news'}
-            </button>
-            {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete News</button>}
-        </form>
+                <br />
+                <button type='submit'>
+                    {props.creator ? 'Create News' : 'Edit news'}
+                </button>
+                {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete News</button>}
+            </form>
+        </div>
+        
 
     )
 }

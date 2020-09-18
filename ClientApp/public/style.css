@@ -1,0 +1,84 @@
+﻿.user label{
+    font-size: 70%;
+}
+
+.button-txt{
+    background: none;
+    border: none;
+}
+
+.button-txt:hover{
+    outline: none;
+}
+
+div.row.p-4 > div > button {
+    background-color: #e6e7ea;
+    border: none;
+    border-radius: 7.5px;
+    padding: 4px 10px;
+    color: #6f6f6f;
+    text-transform: lowercase;
+}
+
+div.row.p-4 > div > button:focus {
+    outline: none;
+}
+
+table{
+    font-size: 13px;
+}
+
+thead{
+    font-size: 14px !important;
+    background-color: white;
+}
+
+div.g-form{
+    border: none !important;
+}
+
+    div.g-form input, div.g-form label {
+        width: 60% !important;
+        margin-left: 0 !important;
+        margin-bottom: 10px;
+    }
+    div.g-form label {
+        font-weight: bold;
+        font-size: 12px !important;
+    }
+    div.g-form button {
+        width: 20% !important;
+        margin: 0 !important;
+    }
+td > button {
+    border: none;
+    font-size: 10px;
+    padding: 4px 10px;
+    color: #6f6f6f;
+    text-transform: lowercase;
+}
+
+td > button:focus {
+    outline: none;
+}
+
+    td > button:first-child {
+        background-color: #e74a3b;
+        color: white;
+    }
+    td > button:last-child {
+        background-color: #f6c23e;
+        color: #fff;
+    }
+
+.note-popover.popover {
+    display: none !important;
+}
+
+.f-width{
+    width: 100%;
+}
+
+input{
+    margin-bottom: 10px;
+}

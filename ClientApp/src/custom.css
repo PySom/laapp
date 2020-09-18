@@ -1,14 +1,111 @@
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
+body{
+    width: 100%;
+    height: 100%;
+}
+.p-t-30{
+    padding-top: 30px;
+}
+.la-p-l-10{
+    padding-left: 30px;
+}
+.l-pl-0{
+    padding-left: 0;
 }
 
-code {
-  color: #E01A76;
+div.g-form{
+    margin-top: 5px;
+    border-radius: 10px;
+    border: 0.5px solid #ccc;
+}
+.g-form h2 {
+    text-align: center;
+    font-weight: 200;
+    font-size: 2em;
+    margin-top: 10px;
+    color: #34495e;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.g-form p {
+    text-align: center;
+    font-weight: 200;
+    font-size: 1em;
+    margin-top: 10px;
+    color: #34495e;
+}
+
+html .g-form label {
+    margin-left: 10%;
+}
+
+html .g-form input[type="text"],
+html .g-form input[type="email"],
+html .g-form input[type="tel"],
+html .g-form textarea,
+html .g-form input[type="password"],
+html .g-form button {
+    width: 80%;
+    margin-left: 10%;
+    margin-bottom: 25px;
+    height: 40px;
+    border-radius: 5px;
+    outline: 0;
+    -moz-outline-style: none;
+}
+
+html .g-form input[type="text"],
+html .g-form input[type="email"],
+html .g-form input[type="tel"],
+html .g-form textarea,
+html .g-form input[type="password"] {
+    border: 1px solid #bbb;
+    padding: 0 0 0 10px;
+    font-size: 14px;
+}
+
+    html .g-form input[type="text"]:focus,
+    html .g-form input[type="email"]:focus,
+    html .g-form input[type="tel"]:focus,
+    html .g-form textarea:focus,
+    html .g-form input[type="password"]:focus {
+        border: 1px solid #3498db;
+    }
+
+html .g-form a {
+    text-align: center;
+    font-size: 0.8em;
+    color: #3498db;
+}
+
+    html .g-form a p {
+        padding-bottom: 10px;
+    }
+
+html .g-form button {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: 200;
+    cursor: pointer;
+    transition: box-shadow 0.4s ease;
+}
+
+    html .g-form button:hover {
+        box-shadow: 1px 1px 5px #555;
+    }
+
+    html .g-form button:active {
+        box-shadow: 1px 1px 7px #222;
+    }
+
+.g-form:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: -webkit-linear-gradient(left, #27ae60 0%, #27ae60 20%, #8e44ad 20%, #8e44ad 40%, #3498db 40%, #3498db 60%, #e74c3c 60%, #e74c3c 80%, #f1c40f 80%, #f1c40f 100%);
+    background: -moz-linear-gradient(left, #27ae60 0%, #27ae60 20%, #8e44ad 20%, #8e44ad 40%, #3498db 40%, #3498db 60%, #e74c3c 60%, #e74c3c 80%, #f1c40f 80%, #f1c40f 100%);
+    height: 5px;
+    border-radius: 5px 5px 0 0;
 }

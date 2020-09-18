@@ -2,7 +2,14 @@
 
 export const useForm = (type, val) => {
     const [value, setValue] = useState(val);
-    const onChange = (e) => setValue(e.target.value);
+    const onChange = (e) => {
+        if (typeof e === 'object') {
+            setValue(e.target.value)
+        }
+        else {
+            setValue(e)
+        }
+    };
     const onSetChange = (data) => setValue(data);
     return {
         main: { type, value, onChange },

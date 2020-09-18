@@ -8,9 +8,9 @@ const useFileUpload = () => {
         e.preventDefault();
         const formData = new FormData()
         formData.append('file', fileData)
-        file.addFile(formData)
-            .then(response => setValue(response.name))
-            .catch(err => console.error(err))
+        return file.addFile(formData)
+                .then(response => setValue(response.name))
+                .catch(err => console.error(err))
     };
     return { value, onUpload }
 }
@@ -21,9 +21,9 @@ const useFileEdit = (image) => {
         const formData = new FormData()
         formData.append('file', fileData.file)
         formData.append('oldImage', fileData.image)
-        file.editFile(formData)
-            .then(response => setValue(response.name))
-            .catch(err => console.error(err))
+        return file.editFile(formData)
+                .then(response => setValue(response.name))
+                .catch(err => console.error(err))
     }
     return { value, onEdit }
 }
@@ -31,13 +31,13 @@ const useFileEdit = (image) => {
 const useFileDelete = (file) => {
     const [value, setValue] = useState('');
     const onDelete = (fileData) => {
-        file.deleteFile(fileData)
-            .then(response => {
-                if (response.status === '204') {
-                    setValue('deleted')
-                }
-            })
-            .catch(err => console.error(err))
+        return file.deleteFile(fileData)
+                .then(response => {
+                    if (response.status === '204') {
+                        setValue('deleted')
+                    }
+                })
+                .catch(err => console.error(err))
     }
     return { value, onDelete }
 }

@@ -3,12 +3,10 @@ import { Table } from 'reactstrap';
 import api from '../../sideEffects/apis/api'
 import { useForm } from '../../customHooks/useForm'
 import ParishList from '../Parishes/Parish';
+import TextEditor from '../TextEditor/TextEditor';
 
 const noDataItem = {
-    colSpan: '4',
-    style: {
-        textAlign: 'center'
-    }
+    colSpan: '4'
 }
 
 
@@ -22,7 +20,10 @@ const DeaneryList = ({ setDeaneries, isBusy, ...props }) => {
                 setDeaneries(response)
                 isBusy(false)
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                isBusy(false)
+                console.error(err)
+            })
     }, [setDeaneries, isBusy])
 
     const create = (model) => {
@@ -32,7 +33,10 @@ const DeaneryList = ({ setDeaneries, isBusy, ...props }) => {
                 props.createDeanery(response)
                 isBusy(false)
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                isBusy(false)
+                console.error(err)
+            })
     }
 
     const edit = (model) => {
@@ -42,22 +46,32 @@ const DeaneryList = ({ setDeaneries, isBusy, ...props }) => {
                 props.editDeanery(response)
                 isBusy(false)
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                isBusy(false)
+                console.error(err)
+            })
     }
 
     const deleter = (id) => {
-        isBusy(true)
-        api.deleteWithId(`deaneries/${id}`)
-            .then(response => {
-                props.deleteDeanery(id)
-                isBusy(false)
-            })
-            .catch(err => console.error(err))
+        if (window.confirm("Should we delete this?")){
+            isBusy(true)
+            api.deleteWithId(`deaneries/${id}`)
+                .then(response => {
+                    props.deleteDeanery(id)
+                    isBusy(false)
+                })
+                .catch(err => {
+                    isBusy(false)
+                    console.error(err)
+                })
+        }
+        
     }
 
     return (
-        <div>
+        <div className="f-width">
             <button type="button" onClick={() => setDisplay(!display)}>Add Deanery</button>
+            <DeaneryForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={create} />
             <Table striped>
                 <thead>
                     <tr>
@@ -90,7 +104,6 @@ const DeaneryList = ({ setDeaneries, isBusy, ...props }) => {
                 }
 
             </Table>
-            <DeaneryForm className={display ? 'd-block' : 'd-none'} creator={true} isBusy={isBusy} onSubmit={create} />
         </div>
 
     )
@@ -181,23 +194,26 @@ const DeaneryForm = (props) => {
     }
 
     return (
-        <form className={props.className} onSubmit={submitForm}>
-            <input {...idField.main} />
-            <div>
-                <label>Add Name: </label>
-                <input {...nameField.main} />
-            </div>
-            <div>
-                <label>Add other details: </label>
-                <textarea {...otherField.main}></textarea>
-            </div>
-            
+        <div className="g-form">
+            <form className={props.className} onSubmit={submitForm}>
+                <input {...idField.main} />
+                <div>
+                    <label>Add Name: </label>
+                    <input {...nameField.main} />
+                </div>
+                <div>
+                    <label>Add other details: </label>
+                    <TextEditor {...otherField.main} />
+                </div>
 
-            <button type='submit'>
-                {props.creator ? 'Create Deanery' : 'Edit Deanery'}
-            </button>
-            {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete Deanery</button>}
-        </form>
+
+                <button type='submit'>
+                    {props.creator ? 'Create Deanery' : 'Edit Deanery'}
+                </button>
+                {!props.creator && <button onClick={(e) => props.onDelete(idField.main.value)} type='button'>Delete Deanery</button>}
+            </form>
+        </div>
+        
 
     )
 }
